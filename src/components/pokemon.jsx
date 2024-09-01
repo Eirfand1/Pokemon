@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Modal } from 'flowbite-react';
-
+import { Card, Button, Modal, Progress } from 'flowbite-react';
+import Load from './loading.gif';
 const Pokemon = () => {
   const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ const Pokemon = () => {
         setError('Failed to fetch Pokemon data');
         console.error('Error : ', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
     fetchPokemon();
@@ -47,7 +47,7 @@ const Pokemon = () => {
     const img = result.sprites.front_default;
 
     return (
-      <Card key={result.id} className="w-full max-w-sm border-4 border-purple-300" onClick={()=>{
+      <Card key={result.id} className="w-full max-w-sm border-4 border-purple-300 hover:rotate-2 transition-all" onClick={()=>{
         setModal(true);
         setPokeDetail(result);
       }}>
@@ -66,8 +66,8 @@ const Pokemon = () => {
 
 
   if (loading) return( 
-  <div className="flex bg-white flex-col justify-center items-center h-screen">
-    <img className='w-40' src="https://64.media.tumblr.com/f94d1715779ac36beb437479b1803c9c/1aac43197a01d1aa-2f/s1280x1920/5f569f71938b6474c4213c500f96ae8538d39bdc.gifv" alt="" />
+  <div className="flex bg-gray-100/25 w-screen flex-col justify-center items-center h-screen">
+    <img className='w-40' src={Load} alt="" />
    <div className='font-pressStart'>Loading...</div>  
   </div>
   )
@@ -93,14 +93,39 @@ const Pokemon = () => {
       </style>
       {
         modal && (
-          <Modal show={modal} onClose={() => setModal(false)} popup>
+          <Modal show={modal} onClose={() => setModal(false)} size="3xl" popup>
             <Modal.Header/>
-            <Modal.Body className="flex flex-col gap-8 justify-center items-center ">
+            <Modal.Body className="grid grid-cols-1 place-items-center gap-8">
               <h1 className="text-3xl font-bold uppercase font-pressStart">{pokeDetail.name}</h1>
               <img src={pokeDetail.sprites.other.dream_world.front_default} alt="poke" className='w-60' /> 
-              {console.log(pokeDetail)}
-              <div>
 
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Type</h2>
+                <p className="capitalize">{pokeDetail.types.map(type => type.type.name).join(', ')}</p>
+              </div>
+
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">HP</h2>
+                <Progress progress={pokeDetail.stats[0].base_stat} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
+              </div>
+
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Stats</h2>
+                {pokeDetail.stats.slice(1).map((stat, index) => (
+                  <div key={index} className="mb-2">
+                    <p className="capitalize">{stat.stat.name}: {stat.base_stat}</p>
+                    <Progress progress={stat.base_stat} color="blue" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Abilities</h2>
+                <ul className="list-disc list-inside">
+                  {pokeDetail.abilities.map((ability, index) => (
+                    <li key={index} className="capitalize">{ability.ability.name}</li>
+                  ))}
+                </ul>
               </div>
             </Modal.Body>
           </Modal>
