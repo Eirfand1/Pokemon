@@ -77,7 +77,7 @@ const Pokemon = () => {
  
               <div className="w-full">
                 <h2 className="text-xl font-bold mb-2">HP : {pokeDetail.stats[0].base_stat}</h2>
-                <Progress progress={pokeDetail.stats[0].base_stat} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
+                <Progress progress={pokeDetail.stats[0].base_stat - 20} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
               </div>
  
               <div className="w-full">
@@ -85,7 +85,7 @@ const Pokemon = () => {
                 {pokeDetail.stats.slice(1).map((stat, index) => (
                   <div key={index} className="mb-2">
                     <p className="capitalize">{stat.stat.name}: {stat.base_stat}</p>
-                    <Progress progress={stat.base_stat} color="blue" />
+                    <Progress progress={stat.base_stat - 20} color="blue" />
                   </div>
                 ))}
               </div>
