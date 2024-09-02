@@ -9,7 +9,7 @@ const Pokemon = () => {
   const [limit, setLimit] = useState(20); 
   const [modal, setModal] = useState(false);
   const [pokeDetail, setPokeDetail] = useState([]);
-
+ 
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
@@ -31,21 +31,21 @@ const Pokemon = () => {
     };
     fetchPokemon();
   }, [offset]);
-
+ 
   const nextPage = ()=> {
     setLoading(true);
     setOffset(offset=>offset + limit);
   } 
-
+ 
   const prevPage = ()=> {
     setLoading(true);
     offset === 0 ? setLoading(false) : setOffset(offset=>offset - limit);
-
+ 
   }
-
+ 
   const PokemonCard = ({ result }) => {
     const img = result.sprites.front_default;
-
+ 
     return (
       <Card key={result.id} className="w-full max-w-sm border-4 border-purple-300 hover:rotate-2 transition-all" onClick={()=>{
         setModal(true);
@@ -61,10 +61,50 @@ const Pokemon = () => {
       </Card>
     );
   };
-
-  
-
-
+ 
+  const ModalPokemon = ({pokeDetail}) => {
+      return (
+         <Modal show={modal} onClose={() => setModal(false)} size="3xl" popup>
+            <Modal.Header/>
+            <Modal.Body className="grid grid-cols-1 place-items-center gap-8">
+              <h1 className="text-3xl font-bold uppercase font-pressStart">{pokeDetail.name}</h1>
+              <img src={pokeDetail.sprites.other.dream_world.front_default} alt="poke" className='w-60' /> 
+ 
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Type</h2>
+                <p className="capitalize">{pokeDetail.types.map(type => type.type.name).join(', ')}</p>
+              </div>
+ 
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">HP : {pokeDetail.stats[0].base_stat}</h2>
+                <Progress progress={pokeDetail.stats[0].base_stat} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
+              </div>
+ 
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Stats</h2>
+                {pokeDetail.stats.slice(1).map((stat, index) => (
+                  <div key={index} className="mb-2">
+                    <p className="capitalize">{stat.stat.name}: {stat.base_stat}</p>
+                    <Progress progress={stat.base_stat} color="blue" />
+                  </div>
+                ))}
+              </div>
+ 
+              <div className="w-full">
+                <h2 className="text-xl font-bold mb-2">Abilities</h2>
+                <ul className="list-disc list-inside">
+                  {pokeDetail.abilities.map((ability, index) => (
+                    <li key={index} className="capitalize">{ability.ability.name}</li>
+                  ))}
+                </ul>
+              </div>
+            </Modal.Body>
+          </Modal>
+      )
+ 
+  } 
+ 
+ 
   if (loading) return( 
   <div className="flex bg-gray-100/25 w-screen flex-col justify-center items-center h-screen">
     <img className='w-40' src={Load} alt="" />
@@ -72,9 +112,9 @@ const Pokemon = () => {
   </div>
   )
   if (error) return <div className="flex justify-center items-center h-screen">{error}</div>;
-
+ 
   return (
-
+ 
     <div className="bg-pink-100 min-h-screen py-8 font-roboto">
       <h1 className="sm:text-3xl text-2xl font-bold text-center mb-10 font-pressStart">MON MON POKEMON WS KEDEKEP MON</h1>
       <div className="container w-10/12 mx-auto px-4">
@@ -93,49 +133,13 @@ const Pokemon = () => {
       </style>
       {
         modal && (
-          <Modal show={modal} onClose={() => setModal(false)} size="3xl" popup>
-            <Modal.Header/>
-            <Modal.Body className="grid grid-cols-1 place-items-center gap-8">
-              <h1 className="text-3xl font-bold uppercase font-pressStart">{pokeDetail.name}</h1>
-              <img src={pokeDetail.sprites.other.dream_world.front_default} alt="poke" className='w-60' /> 
-
-              <div className="w-full">
-                <h2 className="text-xl font-bold mb-2">Type</h2>
-                <p className="capitalize">{pokeDetail.types.map(type => type.type.name).join(', ')}</p>
-              </div>
-
-              <div className="w-full">
-                <h2 className="text-xl font-bold mb-2">HP : {pokeDetail.stats[0].base_stat}</h2>
-                <Progress progress={pokeDetail.stats[0].base_stat} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
-              </div>
-
-              <div className="w-full">
-                <h2 className="text-xl font-bold mb-2">Stats</h2>
-                {pokeDetail.stats.slice(1).map((stat, index) => (
-                  <div key={index} className="mb-2">
-                    <p className="capitalize">{stat.stat.name}: {stat.base_stat}</p>
-                    <Progress progress={stat.base_stat} color="blue" />
-                  </div>
-                ))}
-              </div>
-
-              <div className="w-full">
-                <h2 className="text-xl font-bold mb-2">Abilities</h2>
-                <ul className="list-disc list-inside">
-                  {pokeDetail.abilities.map((ability, index) => (
-                    <li key={index} className="capitalize">{ability.ability.name}</li>
-                  ))}
-                </ul>
-              </div>
-            </Modal.Body>
-          </Modal>
-         
+         <ModalPokemon pokeDetail={pokeDetail}/> 
         )
       }
-      
+ 
     </div>
-
+ 
   )
 }
-
-export default Pokemon 
+ 
+export default Pokemon
