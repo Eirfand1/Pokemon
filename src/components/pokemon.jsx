@@ -105,7 +105,7 @@ const Pokemon = () => {
               </div>
 
               <div className="w-full">
-                <h2 className="text-xl font-bold mb-2">HP</h2>
+                <h2 className="text-xl font-bold mb-2">HP : {pokeDetail.stats[0].base_stat}</h2>
                 <Progress progress={pokeDetail.stats[0].base_stat} color="green" label={`${pokeDetail.stats[0].base_stat}/100`} />
               </div>
 
