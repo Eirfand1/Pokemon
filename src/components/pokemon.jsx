@@ -105,19 +105,23 @@ const Pokemon = () => {
   } 
  
  
-  if (loading) return( 
-  <div className="flex bg-gray-100/25 w-screen flex-col justify-center items-center h-screen">
-    <img className='w-40' src={Load} alt="" />
-   <div className='font-pressStart'>Loading...</div>  
-  </div>
-  )
+  
   if (error) return <div className="flex justify-center items-center h-screen">{error}</div>;
  
   return (
  
     <div className="bg-pink-100 min-h-screen py-8 font-roboto">
+      
       <h1 className="sm:text-3xl text-2xl font-bold text-center mb-10 font-pressStart">MON MON POKEMON WS KEDEKEP MON</h1>
       <div className="container w-10/12 mx-auto px-4">
+      {
+        loading && (
+        <div className="flex bg-gray-100/25 w-screen flex-col justify-center items-center h-screen">
+            <img className='w-40' src={Load} alt="" />
+            <div className='font-pressStart'>Loading...</div>  
+        </div>
+        )
+      }
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 justify-items-center">
           {pokemon.map((result) => (
             <PokemonCard key={result.id} result={result}/> 
