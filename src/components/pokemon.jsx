@@ -9,6 +9,7 @@ const Pokemon = () => {
   const [limit, setLimit] = useState(20); 
   const [modal, setModal] = useState(false);
   const [pokeDetail, setPokeDetail] = useState([]);
+  const [loadSkeleton, setLoadSkeleton] = useState(false);
  
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -27,27 +28,39 @@ const Pokemon = () => {
         console.error('Error : ', err);
       } finally {
         setLoading(false);
+        setLoadSkeleton(false);
       }
     };
     fetchPokemon();
   }, [offset]);
  
   const nextPage = ()=> {
-    setLoading(true);
+    setLoadSkeleton(true);
     setOffset(offset=>offset + limit);
   } 
  
   const prevPage = ()=> {
-    setLoading(true);
+    setLoadSkeleton(true);
     offset === 0 ? setLoading(false) : setOffset(offset=>offset - limit);
  
   }
+
+  const SkeletonCard = () => {
+  return (
+    <div className="w-full rounded-md max-w-sm border-4 border-purple-300 p-4 animate-pulse">
+      <div className="h-10 bg-amber-100 rounded mb-4"></div>
+      <div className="h-48 bg-gray-200 rounded mb-4"></div>
+      <div className="h-6 bg-gray-200 rounded"></div>
+    </div>
+  );
+  }; 
  
   const PokemonCard = ({ result }) => {
     const img = result.sprites.front_default;
- 
+    
+    if (loadSkeleton) return <SkeletonCard/>
     return (
-      <Card key={result.id} className="w-full max-w-sm border-4 border-purple-300 hover:rotate-2 transition-all" onClick={()=>{
+      <Card key={result.id} className="w-full max-w-sm border-4 border-gray-500 hover:rotate-2 transition-all" onClick={()=>{
         setModal(true);
         setPokeDetail(result);
       }}>
@@ -108,7 +121,7 @@ const Pokemon = () => {
   if (loading) return( 
   <div className="flex bg-gray-100/25 w-screen flex-col justify-center items-center h-screen">
     <img className='w-40' src={Load} alt="" />
-   <div className='font-pressStart'>Loading...</div>  
+    <div className='font-pressStart'>Loading...</div>  
   </div>
   )
   if (error) return <div className="flex justify-center items-center h-screen">{error}</div>;
